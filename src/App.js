@@ -17,24 +17,47 @@ const App = () => {
     setValue(randomValue)
   }
 
-  const clear = () => {
-    setValue(null)
-    setResponse(null)
-    setImage(null)
-    setError(null)
+  const analyzeImage = () => {
+    
   }
 
+  const clear = () => {
+    setValue("")
+    setResponse("")
+    setImage(null)
+    setError("")
+  }
+
+  const uploadImage = async(e) => { 
+    setResponse("")
+    const formData = new FormData()
+    formData.append('file', e.target.files[0])
+    setImage(e.target.files[0])
+    e.target.value = null
+    try {
+      const options = {
+        method: 'POST',
+        body: formData
+      }
+      const response = await fetch('http://localhost:8000/upload', options)
+      const data = response.json()
+      console.log(data)
+    }
+    catch (error) {
+      setError("Something went wrong! Please try again.")
+    }
+  }
 
   return (
     <div className="app">
       <section className="search-section">
         <div className="image-container">
-          {image && <img className="image" src={""} />}
+          {image && <img className="image" src={URL.createObjectURL(image)} />}
         </div>
         <p className="extra-info">
           <span>
             <label htmlFor="files" className="upload"> upload an image </label>
-            <input onChange={e => setValue(e.target.value)} id="files" accept="image/*" type="file" hidden />
+            <input onChange={uploadImage} id="files" accept="image/*" type="file" hidden />
           </span>
           to ask questions about.
         </p>
@@ -45,7 +68,7 @@ const App = () => {
           <input
             value={value}
             placeholder="What is in the image..."
-            onChange={""}
+            onChange={e => setValue(e.target.value)}
           />
           {(!response && !error) && <button onClick={""}>Ask me</button>}
           {(response || error) && <button onClick={clear}>Clear</button>}
