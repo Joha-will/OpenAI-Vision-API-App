@@ -12,6 +12,18 @@ const App = () => {
     'Does the image have puppies?'
   ]
 
+  const surprise = () => {
+    const randomValue = surpriseOptions[Math.floor(Math.random() * surpriseOptions.length)]
+    setValue(randomValue)
+  }
+
+  const clear = () => {
+    setValue(null)
+    setResponse(null)
+    setImage(null)
+    setError(null)
+  }
+
 
   return (
     <div className="app">
@@ -22,12 +34,12 @@ const App = () => {
         <p className="extra-info">
           <span>
             <label htmlFor="files" className="upload"> upload an image </label>
-            <input onChange={""} id="files" accept="image/*" type="file" hidden />
+            <input onChange={e => setValue(e.target.value)} id="files" accept="image/*" type="file" hidden />
           </span>
           to ask questions about.
         </p>
         <p>What do you want to know about the image?
-          <button className="surprise" onClick={""} disabled={""}>Surprise me</button>
+          <button className="surprise" onClick={surprise} disabled={response}>Surprise me</button>
         </p>
         <div className="input-container">
           <input
@@ -36,7 +48,7 @@ const App = () => {
             onChange={""}
           />
           {(!response && !error) && <button onClick={""}>Ask me</button>}
-          {(response || error) && <button onClick={""}>Clear</button>}
+          {(response || error) && <button onClick={clear}>Clear</button>}
         </div>
         {error && <p>{""}</p>}
         {response && <p className="answer">{""}</p>}
