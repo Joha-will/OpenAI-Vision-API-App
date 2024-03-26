@@ -17,8 +17,31 @@ const App = () => {
     setValue(randomValue)
   }
 
-  const analyzeImage = () => {
-    
+  const analyzeImage = async () => {
+
+    setResponse("")
+    if (!image) {
+      setError("Sorry! Please upload an image first!")
+      return
+    }
+    try {
+      const options = {
+        method: 'POST',
+        body: JSON.stringify({
+          message: value
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+      const response = await fetch('http://localhost:8000/analyze', options)
+      const data = response.json()
+      console.log(data)
+
+    } catch (e) {
+      console.error(e)
+      setError("Something went wrong! Please try again.")
+    }
   }
 
   const clear = () => {
@@ -40,8 +63,9 @@ const App = () => {
         body: formData
       }
       const response = await fetch('http://localhost:8000/upload', options)
-      const data = response.json()
+      const data = await response.json()
       console.log(data)
+      setResponse(data.message.content)
     }
     catch (error) {
       setError("Something went wrong! Please try again.")
@@ -70,11 +94,11 @@ const App = () => {
             placeholder="What is in the image..."
             onChange={e => setValue(e.target.value)}
           />
-          {(!response && !error) && <button onClick={""}>Ask me</button>}
+          {(!response && !error) && <button onClick={analyzeImage}>Ask me</button>}
           {(response || error) && <button onClick={clear}>Clear</button>}
         </div>
         {error && <p>{""}</p>}
-        {response && <p className="answer">{""}</p>}
+        {response && <p className="answer">{response}</p>}
       </section>
     </div>
   )
